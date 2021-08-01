@@ -79,24 +79,40 @@ custom_layer_init(Application_Links *app){
     //Bind( move_right, KeyCode_Right );
     //Bind( move_up, KeyCode_Up );
     //Bind( move_down, KeyCode_Down );
-    Bind( toggle_fullscreen, KeyCode_Return, KeyCode_Alt);
-    Bind( exit_4coder, KeyCode_F4, KeyCode_Alt);
+    Bind( toggle_fullscreen,             KeyCode_Return, KeyCode_Alt);
+    Bind( exit_4coder,                   KeyCode_F4, KeyCode_Alt);
     
     SelectMap( mapid_normal );
     ParentMap( mapid_shared );
-    Bind( go_to_insert_mode, KeyCode_I );
-    Bind( go_to_visual_mode, KeyCode_V );
-    Bind( move_left, KeyCode_H );
-    Bind( move_right, KeyCode_J );
-    Bind( move_up, KeyCode_K );
-    Bind( move_down, KeyCode_L );
+    Bind( go_to_insert_mode,             KeyCode_I );
+    Bind( go_to_visual_mode,             KeyCode_V );
+    Bind( move_left,                     KeyCode_H );
+    Bind( move_down,                     KeyCode_J );
+    Bind( move_up,                       KeyCode_K );
+    Bind( move_right,                    KeyCode_L );
+    Bind( delete_char,                   KeyCode_X );
+    Bind( backspace_char,                KeyCode_Backspace );
+    Bind( delete_range,                  KeyCode_D );
+    Bind( backspace_char,                KeyCode_Backspace );
+    Bind( center_view,                   KeyCode_M );
+    Bind( move_up_to_blank_line,         KeyCode_LeftBracket );
+    Bind( comment_line_toggle,           KeyCode_ForwardSlash );
+    Bind( search,                        KeyCode_Space );
+    Bind( interactive_new,               KeyCode_N, KeyCode_Control);
+    Bind( interactive_open_or_new,       KeyCode_O, KeyCode_Control);
+    Bind( interactive_switch_buffer,     KeyCode_I, KeyCode_Control);
+    Bind( move_left_whitespace_or_token_boundary, KeyCode_B);
+    Bind( move_right_whitespace_or_token_boundary, KeyCode_W);
+    Bind( move_left_whitespace_boundary, KeyCode_B, KeyCode_Shift);
+    Bind( move_right_whitespace_boundary, KeyCode_W, KeyCode_Shift);
+    Bind( undo, KeyCode_U );
+    Bind( redo, KeyCode_U, KeyCode_Shift );
     
     SelectMap( mapid_insert );
     ParentMap( mapid_shared );
-    BindTextInput( write_text_and_auto_indent );
+    BindTextInput( write_text_input );
     
     SelectMap( mapid_visual );
-    Bind( go_to_normal_mode, KeyCode_Escape );
     
     /* This is to make sure that the default bindings on the buffers will be mapid_normal. */
     SelectMap( file_map_id );

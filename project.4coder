@@ -1,0 +1,44 @@
+version(2);
+project_name = "4ed_skamoza";
+patterns = {
+"*.c",
+"*.cpp",
+"*.h",
+"*.m",
+"*.bat",
+"*.sh",
+"*.4coder",
+};
+
+blacklist_patterns = {
+".*",
+};
+
+load_paths_base = {
+ { ".", .relative = true, .recursive = true, },
+ { "../4coder/custom", .relative = true, .recursive = true, },
+};
+
+load_paths = {
+ .win = load_paths_base,
+ .linux = load_paths_base,
+ .mac = load_paths_base,
+};
+
+commands = {
+	.run = {
+		.out = "*run*",
+		.footer_panel = true,
+		.save_dirty_files = false,
+		.win   = "remedybg start-debugging",
+		.linux = "4ed",
+		.mac   = "4ed",
+	},
+};
+
+fkey_command = {
+.F5 = "run"
+};
+
+user_name = "skamoza";
+
