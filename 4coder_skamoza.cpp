@@ -19,34 +19,57 @@
 #define VIM_CURSOR_ROUNDNESS 0
 #define VIM_USE_ECHO_BAR 1
 
+#define q vim_q
+#define wq vim_wq
+
 #include "../4coder-vimmish/4coder_vimmish.cpp"
+
+#undef q
+#undef wq
+
+CUSTOM_COMMAND_SIG(q)
+CUSTOM_DOC("Kills current buffer instad of killing the pane, as 4coder_vimmish did.")
+{
+    View_ID view = get_active_view(app, Access_Always);
+    Buffer_ID buffer = view_get_buffer(app, view, Access_Always);
+    Scratch_Block scratch(app);
+    String_Const_u8 file_name = push_buffer_file_name(app, scratch, buffer);
+    
+    if (file_name.size > 0
+        && file_name.str[0] == '*'
+        && file_name.str[file_name.size - 1] == '*')
+    {
+        // we don't want to kill it, but rather go somewhere else
+        interactive_switch_buffer(app);
+    }
+    else
+    {
+        kill_buffer(app);
+    }
+    
+}
+
+CUSTOM_COMMAND_SIG(wq)
+CUSTOM_DOC("Save buffer then kill it.")
+{
+    save(app);
+    q(app);
+}
+
 
 // NOTE(allen): Users can declare their own managed IDs here.
 
 #include "generated/managed_id_metadata.cpp"
 
-CUSTOM_COMMAND_SIG(skamoza_substitute)
+VIM_OPERATOR(skamoza_vim_substitute)
 {
-    View_ID view = get_active_view(app, Access_ReadWriteVisible);
-    View_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-    Vim_Visual_Selection selection = vim_get_selection(app, view, buffer);
-    Vim_Operator_State op_state = {};
-    op_state.app          = app;
-    op_state.view         = view;
-    op_state.buffer       = buffer;
-    op_state.op_count     = 1;
-    op_state.op           = 0;
-    op_state.motion_count = 1;
-    op_state.selection    = selection;
-    op_state.total_range  = Ii64_neg_inf;
-    
     if (selection.kind == VimSelectionKind_None)
     {
-        vim_delete_character(app, &op_state, view, buffer, selection, 0, 0);
+        vim_delete_character(app, state, view, buffer, selection, count, count_was_set);
     }
     else
     {
-        vim_change(app, &op_state, view, buffer, selection, 0, 0);
+        vim_change(app, state, view, buffer, selection, count, count_was_set);
     }
     vim_enter_insert_mode(app);
 }
@@ -94,8 +117,6 @@ CUSTOM_COMMAND_SIG(skamoza_startup)
         default_4coder_side_by_side_panels(app, file_names);
         
         set_mouse_suppression(true);
-        toggle_line_wrap(app);
-        load_project(app);
         system_set_fullscreen(true);
         toggle_highlight_line_at_cursor(app);
         
@@ -307,7 +328,7 @@ void skamoza_setup_default_mapping(Application_Links* app, Mapping *mapping, Vim
     VimSelectMap(vim_map_operator_pending);
     VimAddParentMap(vim_map_text_objects);
     
-    VimBind(skamoza_substitute,          vim_key(KeyCode_S));
+    VimBind(skamoza_vim_substitute,          vim_key(KeyCode_S));
     VimBind(move_up_to_blank_line_end,          vim_key(KeyCode_LeftBracket));
     VimBind(move_down_to_blank_line_end,          vim_key(KeyCode_RightBracket));
     
@@ -422,8 +443,9 @@ void skamoza_setup_default_mapping(Application_Links* app, Mapping *mapping, Vim
     VimBind(vim_half_page_down,                                  vim_key(KeyCode_D, KeyCode_Control));
     
     VimBind(vim_step_back_jump_history,                          vim_key(KeyCode_O, KeyCode_Control));
-    VimBind(vim_step_back_jump_history,                          vim_key(KeyCode_Minus, KeyCode_Control));
+    VimBind(vim_step_back_jump_history,                          vim_key(KeyCode_Minus));
     VimBind(vim_step_forward_jump_history,                       vim_key(KeyCode_I, KeyCode_Control));
+    VimBind(vim_step_forward_jump_history,                       vim_key(KeyCode_Minus, KeyCode_Shift));
     VimBind(vim_previous_buffer,                                 vim_key(KeyCode_6, KeyCode_Control));
     
     VimBind(vim_record_macro,                                    vim_key(KeyCode_Q));
